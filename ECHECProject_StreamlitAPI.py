@@ -3,9 +3,6 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from google.colab import drive 
-drive.mount('/content/gdrive')
-
 # Read chess data
 dataChess=pd.read_csv('games.csv')
 
