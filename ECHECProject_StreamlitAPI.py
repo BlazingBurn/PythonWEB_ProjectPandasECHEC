@@ -54,12 +54,12 @@ st.dataframe(dataChessUtils)
 
 # Check outlier in game result
 f, ax = plt.subplots(figsize=(20,5))
-figSubplotsWhiteRating = sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(figSubplotsWhiteRating)
+sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+st.pyplot(f)
 
 f, ax = plt.subplots(figsize=(20,5))
-figSubplotsBlackRating = sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(figSubplotsBlackRating)
+sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+st.pyplot(f)
 
 st.write(dataChessUtils.describe())
 
@@ -83,17 +83,19 @@ filter = (dataChessUtils['black_rating'] >= Q1 - (1.5 * IQR)) & (dataChessUtils[
 dataChessUtils = dataChessUtils.loc[filter]
 
 
-dataChessUtils.describe()
+st.write(dataChessUtils.describe())
 
 
 # Creation visuel pour la victoire des blancs en fonction de leur rang
 f, ax = plt.subplots(figsize=(20,5))
 sns.histplot(data=dataChessUtils, x='white_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs blanc par rapport au classement')
+st.pyplot(f)
 
 
 # Creation visuel pour la victoire des noirs en fonction de leur rang
 f, ax = plt.subplots(figsize=(20,5))
 sns.histplot(data=dataChessUtils, x='black_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs noir par rapport au classement')
+st.pyplot(f)
 
 
 # Check victory type
@@ -115,6 +117,7 @@ plt.pie(data, labels=keys, colors=colors,
 fig = plt.gcf()
 fig.set_size_inches(18.5, 10.5)
 plt.show()
+st.pyplot(fig)
 
 
 # A specific opening is stronger than another ?
@@ -125,13 +128,16 @@ temp_df = dataChessUtils[dataChessUtils['opening_name'].isin(top_opening_white)]
 
 f, ax = plt.subplots(figsize=(20,5))
 sns.countplot(data=temp_df, x='opening_name', hue='victory_status', ax=ax).set(title='Cinq meilleurs opening')
+st.pyplot(f)
 
 
 dataChessOpeningCompare = dataChessUtils[(dataChessUtils['opening_name'].isin(top_opening_white))]
 f, ax = plt.subplots(figsize=(20,5))
 sns.countplot(data=dataChessOpeningCompare, y='opening_name', hue='winner', ax=ax).set(title='Comparaison des cinqs meilleurs opening en fonction du vainqueur du match')
+st.pyplot(f)
 
 
 # Opening depending on game type
 f, ax = plt.subplots(figsize=(20,5))
 sns.countplot(data=dataChessOpeningCompare, x='format', hue='opening_name', ax=ax).set(title="Choix de l'opening en fonction du format de la partie")
+st.pyplot(f)
