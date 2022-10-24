@@ -55,11 +55,11 @@ st.dataframe(dataChessUtils)
 # Check outlier in game result
 f, ax = plt.subplots(figsize=(20,5))
 figSubplotsWhiteRating = sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(figSubplotsWhiteRating)
+st.pyplot(f)
 
 f, ax = plt.subplots(figsize=(20,5))
 figSubplotsBlackRating = sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(figSubplotsBlackRating)
+st.pyplot(f)
 
 st.write(dataChessUtils.describe())
 
