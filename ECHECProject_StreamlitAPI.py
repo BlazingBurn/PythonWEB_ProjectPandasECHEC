@@ -4,13 +4,21 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
 
+st.title("CHESS / ECHECS")
+st.header("**PROBLEMATIQUE : Est-ce qu'un opening particulier influt sur la victoire ?**")
+
+st.markdown("* **Opening** ou **Ouverture** correspond a la première phase d'une partie d'échecs. Elle s'arrête lorsque les forces des deux adversaires sont mobilisées et que les rois sont en sécurité.")
+
+from PIL import Image
+image = Image.open('chess.jpg')
+st.image(image, caption='chess game')
+
 # Read chess data
-st.write("Start get data from csv .....")
 dataChess=pd.read_csv('games.csv')
-st.write("End get data from csv .....")
 
 
 # "Unix" to "dateTime"
+st.header("Transformation \"Unix\" du dataSet à des valeurs \"dateTime\" :")
 dataChessTimes = dataChess[['created_at','last_move_at']].copy()
 
 dataChessTimes['created_at_dt'] = pd.to_datetime(dataChessTimes['created_at']/1000, 
@@ -26,6 +34,7 @@ dataChess['last_move_at'] = dataChessTimes['last_move_at_dt']
 
 
 # Add game format
+st.header("Ajout du format de la partie jouer : ")
 def GameType(inc):
     splitted = inc.split('+')
     if int(splitted[0])+int(splitted[1]) <= 9:
@@ -40,6 +49,10 @@ dataChess['format'] = np.vectorize(GameType)(dataChess['increment_code'])
 # display data
 dataChess
 
+st.header("I. Est-ce que commencer en premier donne un avantage ?")
+
+st.subheader("Seulement les parties classées :")
+
 # Only ranked games
 dataChessUtils = dataChess[(dataChess['rated'] == True)]
 
@@ -48,11 +61,13 @@ st.write("Nouveau nombre de parties :",dataChessUtils.shape[0])
 st.dataframe(dataChessUtils.head(5))
 
 # Remove non necessary column
+st.subheader("Supression des colonnes inutile :")
 dataChessUtils = dataChessUtils.drop(columns=['id', 'created_at', 'last_move_at', 'black_id', 'white_id', 'rated', 'opening_ply'])
 
 st.dataframe(dataChessUtils)
 
 # Check outlier in game result
+st.subheader("Vérification si il n'y a pas de valeur absurde dans les résultats des matchs (trop grosse différence entre le classement des deux joueurs)")
 f, ax = plt.subplots(figsize=(20,5))
 sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
 st.pyplot(f)
@@ -86,6 +101,9 @@ dataChessUtils = dataChessUtils.loc[filter]
 st.write(dataChessUtils.describe())
 
 
+st.header("Les blancs avantagés ?")
+st.subheader("Histogrammes par rapport au chance de gagner en étant noir ou blanc :")
+
 # Creation visuel pour la victoire des blancs en fonction de leur rang
 f, ax = plt.subplots(figsize=(20,5))
 sns.histplot(data=dataChessUtils, x='white_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs blanc par rapport au classement')
@@ -97,8 +115,8 @@ f, ax = plt.subplots(figsize=(20,5))
 sns.histplot(data=dataChessUtils, x='black_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs noir par rapport au classement')
 st.pyplot(f)
 
-
 # Check victory type
+st.subheader("Vérification du type de victoire")
 # exploding pie
 explode = [0.1, 0, 0]
 # Seaborn color
@@ -121,6 +139,10 @@ st.pyplot(fig)
 
 
 # A specific opening is stronger than another ?
+st.header("II. Existe-t-il un opening plus fort que les autres ?")
+
+st.subheader("Meilleurs opening :")
+
 dataChessWhiteWin = dataChessUtils[(dataChessUtils['victory_status'] != 'draw')]
 temp_dict = dict(dataChessWhiteWin['opening_name'].value_counts()[0:5])
 top_opening_white = list(temp_dict.keys())
@@ -138,6 +160,11 @@ st.pyplot(f)
 
 
 # Opening depending on game type
+st.subheader("Opening en fonction du type de partie (blitz, rapide, tournoi)")
 f, ax = plt.subplots(figsize=(20,5))
 sns.countplot(data=dataChessOpeningCompare, x='format', hue='opening_name', ax=ax).set(title="Choix de l'opening en fonction du format de la partie")
 st.pyplot(f)
+
+
+st.header("Conclusion")
+st.write("Il existe bien des openings pour augmenter ces chances de gagner mais on rappel que les echecs ce base aussi sur l'adaptabilité et que généralement l'opening influt seulement sur le début et milieu de partie et que pour la fin cela nécessite de prédire les mouvements de son adversaire pour retourner la situation ou maintenir la présion mentale mise sur l'adversaire.")
