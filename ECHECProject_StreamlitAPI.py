@@ -2,9 +2,12 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import streamlit as st
 
 # Read chess data
+st.write("Start get data from csv .....")
 dataChess=pd.read_csv('games.csv')
+st.write("End get data from csv .....")
 
 
 # "Unix" to "dateTime"
@@ -40,23 +43,25 @@ dataChess
 # Only ranked games
 dataChessUtils = dataChess[(dataChess['rated'] == True)]
 
-print("Nouveau nombre de parties :",dataChessUtils.shape[0])
+st.write("Nouveau nombre de parties :",dataChessUtils.shape[0])
 
-dataChessUtils.head(5)
+st.dataframe(dataChessUtils.head(5))
 
 # Remove non necessary column
 dataChessUtils = dataChessUtils.drop(columns=['id', 'created_at', 'last_move_at', 'black_id', 'white_id', 'rated', 'opening_ply'])
 
-dataChessUtils
+st.dataframe(dataChessUtils)
 
 # Check outlier in game result
 f, ax = plt.subplots(figsize=(20,5))
-sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+figSubplotsWhiteRating = sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+st.pyplot(figSubplotsWhiteRating)
 
 f, ax = plt.subplots(figsize=(20,5))
-sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+figSubplotsBlackRating = sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+st.pyplot(figSubplotsBlackRating)
 
-dataChessUtils.describe()
+st.write(dataChessUtils.describe())
 
 # Isolation des valeurs aberrantes | WHITE
 Q1 = dataChessUtils['white_rating'].quantile(0.25)
