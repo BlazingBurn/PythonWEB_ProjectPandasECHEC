@@ -107,15 +107,16 @@ dataChessUtils = dataChessUtils.loc[filter]
 dataChessUtilsNonAberrante = dataChessUtils
 
 
-result = st.button('Issolation des valeurs aberrantes')
+isAberrante = st.select_slider(
+    'Enlever/Remettre les valeurs aberrantes dans le tableau ci-dessous',
+    options=['avec', 'sans'])
 
-if result:
+if isAberrante == 'avec':
     st.write("Apres isolation des valeurs aberrantes : ")
     st.write(dataChessUtilsNonAberrante.describe())
 else:
     st.write("Sans isolation des valeurs aberrantes : ")
     st.write(dataChessUtilsAberrante.describe())
-
 
 st.header("Les blancs avantagés ?")
 st.subheader("Histogrammes par rapport au chance de gagner en étant noir ou blanc :")
