@@ -107,7 +107,9 @@ dataChessUtils = dataChessUtils.loc[filter]
 dataChessUtilsNonAberrante = dataChessUtils
 
 
-if st.button('Issolation des valeurs aberrantes'):
+result = st.button('Issolation des valeurs aberrantes')
+
+if result:
     st.write("Apres isolation des valeurs aberrantes : ")
     st.write(dataChessUtilsNonAberrante.describe())
 else:
