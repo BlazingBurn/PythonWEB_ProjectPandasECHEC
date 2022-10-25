@@ -109,9 +109,9 @@ dataChessUtilsNonAberrante = dataChessUtils
 
 isAberrante = st.select_slider(
     'Enlever/Remettre les valeurs aberrantes dans le tableau ci-dessous',
-    options=['avec', 'sans'])
+    options=['Enlever', 'Remettre'], label_visibility=hidden)
 
-if isAberrante == 'avec':
+if isAberrante == 'Enlever':
     st.write("Apres isolation des valeurs aberrantes : ")
     st.write(dataChessUtilsNonAberrante.describe())
 else:
