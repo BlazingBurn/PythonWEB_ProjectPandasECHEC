@@ -68,15 +68,22 @@ st.dataframe(dataChessUtils)
 
 # Check outlier in game result
 st.subheader("Vérification si il n'y a pas de valeur absurde dans les résultats des matchs (trop grosse différence entre le classement des deux joueurs)")
-f, ax = plt.subplots(figsize=(20,5))
-sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(f)
 
-f, ax = plt.subplots(figsize=(20,5))
-sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
-st.pyplot(f)
+boxplotGraph = st.radio(
+    "Quel graphique boxplot afficher montrant la différence de niveau dans les parties classées ?",
+    ('blanc', 'noir'))
 
-st.write(dataChessUtils.describe())
+if boxplotGraph == 'blanc':
+    f, ax = plt.subplots(figsize=(20,5))
+    sns.boxplot(data=dataChessUtils,x="white_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+    st.pyplot(f)
+else:
+    f, ax = plt.subplots(figsize=(20,5))
+    sns.boxplot(data=dataChessUtils,x="black_rating", y="winner", ax=ax).set(title="Graphique montrant la différence de niveau dans les parties classées")
+    st.pyplot(f)
+
+
+dataChessUtilsAberrante = dataChessUtils
 
 # Isolation des valeurs aberrantes | WHITE
 Q1 = dataChessUtils['white_rating'].quantile(0.25)
@@ -97,23 +104,36 @@ IQR = Q3 - Q1    #IQR is interquartile range.
 filter = (dataChessUtils['black_rating'] >= Q1 - (1.5 * IQR)) & (dataChessUtils['black_rating'] <= Q3 + (1.5 * IQR))
 dataChessUtils = dataChessUtils.loc[filter]
 
+dataChessUtilsNonAberrante = dataChessUtils
 
-st.write(dataChessUtils.describe())
+
+if st.button('Issolation des valeurs aberrantes'):
+    st.write("Apres isolation des valeurs aberrantes : ")
+    st.write(dataChessUtilsNonAberrante.describe())
+else:
+    st.write("Sans isolation des valeurs aberrantes : ")
+    st.write(dataChessUtilsAberrante.describe())
 
 
 st.header("Les blancs avantagés ?")
 st.subheader("Histogrammes par rapport au chance de gagner en étant noir ou blanc :")
 
-# Creation visuel pour la victoire des blancs en fonction de leur rang
-f, ax = plt.subplots(figsize=(20,5))
-sns.histplot(data=dataChessUtils, x='white_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs blanc par rapport au classement')
-st.pyplot(f)
 
+subplotGraph = st.radio(
+    "Quel graphique histogramme afficher montrant la victoire suivant le classement ?",
+    ('blanc', 'noir'))
 
-# Creation visuel pour la victoire des noirs en fonction de leur rang
-f, ax = plt.subplots(figsize=(20,5))
-sns.histplot(data=dataChessUtils, x='black_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs noir par rapport au classement')
-st.pyplot(f)
+if subplotGraph == 'blanc':
+    # Creation visuel pour la victoire des blancs en fonction de leur rang
+    f, ax = plt.subplots(figsize=(20,5))
+    sns.histplot(data=dataChessUtils, x='white_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs blanc par rapport au classement')
+    st.pyplot(f)
+else:
+    # Creation visuel pour la victoire des noirs en fonction de leur rang
+    f, ax = plt.subplots(figsize=(20,5))
+    sns.histplot(data=dataChessUtils, x='black_rating', hue='winner', ax=ax).set(title='Histogramme de victoire des joueurs noir par rapport au classement')
+    st.pyplot(f)
+
 
 # Check victory type
 st.subheader("Vérification du type de victoire")
